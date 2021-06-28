@@ -44,54 +44,54 @@ def determinant(matrix):
     return det
 
 def subtract(matrix1, matrix2):
-    mat = [[matrix1[i][j] - matrix2[i][j] for j in range(len(matrix1))] for i in range(len(matrix1))]
+    mat = [[matrix1[i][j] - matrix2[i][j] for j in range(len(matrix1[0]))] for i in range(len(matrix1))]
     return mat
 
-# def eigenvalue(matrix):
-#     x = symbols('x')
-#     lambda_matrix = [[0 for j in range(len(matrix))] for i in range(len(matrix))]
-#     for i in range(len(matrix)):
-#         lambda_matrix[i][i] = x
-#     mat = subtract(matrix, lambda_matrix)
-
-#     eq1 = Eq(determinant(mat), 0)
-#     sol = solve(eq1)
-#     return sol
-
-# def eigenvectors(matrix, eigenval):
-#     eigenvectors = []
-#     lambda_matrix = [[0 for j in range(len(matrix))] for i in range(len(matrix))]
-#     # nil_matrix = [0 for i in range(len(matrix))]
-#     for val in eigenval:
-#         for k in range(len(matrix)):
-#             lambda_matrix[k][k] = val       
-#             res_matrix = subtract(matrix, lambda_matrix)
-#         for row in range(len(res_matrix)):
-#             res_matrix[row].append(0)
-
-#         system = Matrix(res_matrix)
-
-#         x,y,z = symbols('x y z')
-#         vector = solve_linear_system(system, x, y, z)
-#         eigenvectors.append(vector)
-#     return eigenvectors
-
 def eigenvalue(matrix):
-    m = np.array(matrix)
-    w, v = np.linalg.eig(m)
-    w = w.tolist()
-    rounded = [round(num, 2) for num in w]
-    return rounded
+    x = symbols('x')
+    lambda_matrix = [[0 for j in range(len(matrix[0]))] for i in range(len(matrix))]
+    for i in range(len(matrix)):
+        lambda_matrix[i][i] = x
+    mat = subtract(matrix, lambda_matrix)
+    eq1 = Eq(determinant(mat), 0)
+    sol = solve(eq1)
+    return sol
 
 def eigenvectors(matrix):
-    m = np.array(matrix)
-    w, v = np.linalg.eig(m)
-    v = v.tolist()
-    rounded = [[0 for j in range(len(v[0]))] for i in range(len(v))]
-    for i in range(len(v)):
-        for j in range(len(v[0])):
-            rounded[i][j] = round(v[i][j], 2)
-    return rounded
+    eigenvectors = []
+    eigenval = eigenvalue(matrix)
+    lambda_matrix = [[0 for j in range(len(matrix[0]))] for i in range(len(matrix))]
+
+    # nil_matrix = [0 for i in range(len(matrix))]
+    for val in eigenval:
+        for k in range(len(matrix)):
+            lambda_matrix[k][k] = val       
+            res_matrix = subtract(matrix, lambda_matrix)
+        for row in range(len(res_matrix)):
+            res_matrix[row].append(0)
+        system = Matrix(res_matrix)
+
+        x,y,z = symbols('x y z')
+        vector = solve_linear_system(system, x, y, z)
+        eigenvectors.append(vector)
+    return eigenvectors
+
+# def eigenvalue(matrix):
+#     m = np.array(matrix)
+#     w, v = np.linalg.eig(m)
+#     w = w.tolist()
+#     rounded = [round(num, 2) for num in w]
+#     return rounded
+
+# def eigenvectors(matrix):
+#     m = np.array(matrix)
+#     w, v = np.linalg.eig(m)
+#     v = v.tolist()
+#     rounded = [[0 for j in range(len(v[0]))] for i in range(len(v))]
+#     for i in range(len(v)):
+#         for j in range(len(v[0])):
+#             rounded[i][j] = round(v[i][j], 2)
+#     return rounded
 
 def sigmavalue(matrix):
     sigma_val = []
@@ -118,8 +118,8 @@ def vtrans_matrix(matrix):
 
 def u_matrix(matrix):
     mat = []
-    ata = multiply(transpose(matrix), matrix)
-    sigma_val = sigmavalue(ata)
+    aat = multiply(matrix, transpose(matrix))
+    sigma_val = sigmavalue(aat)
     for i in range(len(sigma_val)):
         multiplyres = np.array(matrix).dot(np.array(vtrans_matrix(matrix)[i])).tolist()
         k = 1/sigma_val[i]
@@ -128,12 +128,28 @@ def u_matrix(matrix):
         mat.append(rounded)
     return mat
 
-matrix1 = [[2,0,8,6,0], [1,6,0,1,7], [5,0,7,4,0], [7,0,8,5,0], [0,10,0,0,7]]
-ata = multiply(transpose(matrix1), matrix1)
-print(ata)
-print(u_matrix(matrix1))
-print(sigma_matrix(matrix1))
-print(vtrans_matrix(matrix1))
+def svd_matrix(matrix):
+    u, sigma, vt = np.linalg.svd(matrix)
+    return u, sigma, vt
+
+def compress_matrix(matrix, rank):
+    u, s, vt = svd_matrix(matrix)
+    leftSide = np.matmul(u[:, 0:rank], np.diag(s)[0:rank, 0:rank])
+    comp_matrix = np.matmul(leftSide, vt[0:rank, :])
+    res_matrix = comp_matrix.astype('uint8')
+    return res_matrix
+
+matrix1 = [[3,1,1], [-1,3,1]]
+aat = multiply(matrix1, transpose(matrix1))
+# print(eigenvalue(aat))
+# print(eigenvectors(aat))
+# print(vtrans_matrix(matrix1))
+# print(u_matrix(matrix1))
+# print(sigma_matrix(matrix1)) 
+# u, s, v = svd_matrix(matrix1)
+
+# mat = np.dot(u*s, v)
+# print(mat)
 # mat = multiply(u_matrix(matrix1), sigma_matrix(matrix1))
 # print(multiply(mat, vtrans_matrix(matrix1)))
 

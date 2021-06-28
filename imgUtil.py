@@ -1,26 +1,41 @@
 import cv2
 import numpy as np
+import os
+from PIL import Image
+from matrixUtil import compress_matrix
 
 filename = 'in/momo.jpg'
-def display_image(filename):
-    img = cv2.imread(filename)
-    cv2.imshow('image', img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-def im2double(im):
-    info = np.iinfo(im.dtype) 
-    return im.astype(np.float) / info.max
 
 def img_to_rgb(filename):
     img = cv2.imread(filename)
-    blue_matrix = im2double(img[:, :, 0])
-    green_matrix = im2double(img[:, :, 1])
-    red_matrix = im2double(img[:, :, 2])
+    blue_matrix = img[:, :, 0]
+    green_matrix = img[:, :, 1]
+    red_matrix = img[:, :, 2]
 
     return red_matrix, green_matrix, blue_matrix
 
+def compress_img(filename, rank):
+    red, green, blue = img_to_rgb(filename)
+    comp_red = Image.fromarray(compress_matrix(red, rank))
+    comp_green = Image.fromarray(compress_matrix(green, rank))
+    comp_blue = Image.fromarray(compress_matrix(blue, rank))
+    return Image.merge("RGB",(comp_red, comp_green, comp_blue))
+
+def write_img(image, filename):
+    path = 'out/'+filename
+    image.save(path)
+
+def get_imgsize(imgpath):
+    return os.path.getsize(imgpath)
+
+def sizecompression_pct(original_path, compressed_path):
+    return 100*get_imgsize(compressed_path)/get_imgsize(original_path)
+
 # display_image(filename)
-# red , green, blue = img_to_rgb(filename)
-# print(red, green, blue)
+# const_matrix = compress_img(filename, 10)
+# write_img(const_matrix, 'momo')
+# print(sizecompression_pct(filename, "out/momo.jpg"))
+# red, green, blue = img_to_rgb(filename)
+# print(red)
+
 
