@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import linalg
 from sympy import symbols, Eq, solve, solve_linear_system, Matrix
+from imgUtil import img_to_rgb
 
 def transpose(matrix):
     result = [[matrix[j][i] for j in range(len(matrix))] for i in range(len(matrix[0]))]
@@ -48,50 +49,21 @@ def subtract(matrix1, matrix2):
     return mat
 
 def eigenvalue(matrix):
-    x = symbols('x')
-    lambda_matrix = [[0 for j in range(len(matrix[0]))] for i in range(len(matrix))]
-    for i in range(len(matrix)):
-        lambda_matrix[i][i] = x
-    mat = subtract(matrix, lambda_matrix)
-    eq1 = Eq(determinant(mat), 0)
-    sol = solve(eq1)
-    return sol
+    m = np.array(matrix)
+    w, v = np.linalg.eig(m)
+    w = w.tolist()
+    rounded = [round(num, 2) for num in w]
+    return rounded
 
 def eigenvectors(matrix):
-    eigenvectors = []
-    eigenval = eigenvalue(matrix)
-    lambda_matrix = [[0 for j in range(len(matrix[0]))] for i in range(len(matrix))]
-
-    # nil_matrix = [0 for i in range(len(matrix))]
-    for val in eigenval:
-        for k in range(len(matrix)):
-            lambda_matrix[k][k] = val       
-            res_matrix = subtract(matrix, lambda_matrix)
-        for row in range(len(res_matrix)):
-            res_matrix[row].append(0)
-        system = Matrix(res_matrix)
-
-        x,y,z = symbols('x y z')
-        vector = solve_linear_system(system, x, y, z)
-        eigenvectors.append(vector)
-    return eigenvectors
-
-# def eigenvalue(matrix):
-#     m = np.array(matrix)
-#     w, v = np.linalg.eig(m)
-#     w = w.tolist()
-#     rounded = [round(num, 2) for num in w]
-#     return rounded
-
-# def eigenvectors(matrix):
-#     m = np.array(matrix)
-#     w, v = np.linalg.eig(m)
-#     v = v.tolist()
-#     rounded = [[0 for j in range(len(v[0]))] for i in range(len(v))]
-#     for i in range(len(v)):
-#         for j in range(len(v[0])):
-#             rounded[i][j] = round(v[i][j], 2)
-#     return rounded
+    m = np.array(matrix)
+    w, v = np.linalg.eig(m)
+    v = v.tolist()
+    rounded = [[0 for j in range(len(v[0]))] for i in range(len(v))]
+    for i in range(len(v)):
+        for j in range(len(v[0])):
+            rounded[i][j] = round(v[i][j], 2)
+    return rounded
 
 def sigmavalue(matrix):
     sigma_val = []
@@ -102,31 +74,28 @@ def sigmavalue(matrix):
     return sigma_val
 
 def sigma_matrix(matrix):
-    ata = multiply(transpose(matrix), matrix)
+    ata = multiply(matrix, transpose(matrix))
     sigma_val = sigmavalue(ata)
-    row = len(matrix)
-    col = len(matrix[0])
-    mat = [[0 for j in range(col)] for i in range(row)]
-
-    for i in range(len(sigma_val)):
-        mat[i][i] = round(sigma_val[i], 2)
-    return mat
+    s = np.round(sigma_val, decimals=5)
+    return s 
 
 def vtrans_matrix(matrix):
     ata = multiply(transpose(matrix), matrix)
-    return eigenvectors(ata)
+    vt = transpose(eigenvectors(ata))
+    vt = np.array(vt)
+    for i in range(len(vt)):
+        norm = np.linalg.norm(vt[i])
+        vt[i] = vt[i]/norm
+    return np.round(vt, decimals=5)
 
 def u_matrix(matrix):
-    mat = []
     aat = multiply(matrix, transpose(matrix))
-    sigma_val = sigmavalue(aat)
-    for i in range(len(sigma_val)):
-        multiplyres = np.array(matrix).dot(np.array(vtrans_matrix(matrix)[i])).tolist()
-        k = 1/sigma_val[i]
-        u_mat = arrscalarProduct(multiplyres, k)
-        rounded = [round(num, 2) for num in u_mat]
-        mat.append(rounded)
-    return mat
+    u = eigenvectors(aat)
+    u = np.array(u)
+    for i in range(len(u)):
+        norm = np.linalg.norm(u[i])
+        u[i] = u[i]/norm
+    return np.round(u, decimals=5)
 
 def svd_matrix(matrix):
     u, sigma, vt = np.linalg.svd(matrix)
@@ -139,22 +108,28 @@ def compress_matrix(matrix, rank):
     res_matrix = comp_matrix.astype('uint8')
     return res_matrix
 
+def test_matrix(matrix, rank):
+    u = u_matrix(matrix)
+    s = sigma_matrix(matrix)
+    vt = vtrans_matrix(matrix)
+    leftSide = np.matmul(u[:, 0:rank], np.diag(s)[0:rank, 0:rank])
+    comp_matrix = np.matmul(leftSide, vt[0:rank, :])
+    res_matrix = comp_matrix.astype('uint8')
+    return res_matrix
+
+filename = 'in/momo.jpg'
+red, green, blue = img_to_rgb(filename)
 matrix1 = [[3,1,1], [-1,3,1]]
-aat = multiply(matrix1, transpose(matrix1))
-# print(eigenvalue(aat))
-# print(eigenvectors(aat))
-# print(vtrans_matrix(matrix1))
-# print(u_matrix(matrix1))
-# print(sigma_matrix(matrix1)) 
-# u, s, v = svd_matrix(matrix1)
+# aat = multiply(matrix1, transpose(matrix1))
+# ata = multiply(transpose(matrix1), matrix1)
+u, s, v = svd_matrix(red)
+u_man = u_matrix(red)
+s_man = sigma_matrix(red)
+v_man = vtrans_matrix(red)
 
-# mat = np.dot(u*s, v)
-# print(mat)
-# mat = multiply(u_matrix(matrix1), sigma_matrix(matrix1))
-# print(multiply(mat, vtrans_matrix(matrix1)))
-
-
-# a = np.array([[5, 3, 0], [3, 5, 0], [0, 0, 0]])
-# b = np.array([0, 0, 0])
-# x = np.linalg.solve(a, b)
-# print(x)
+print(u)
+print(u_man)
+print(s)
+print(s_man)
+print(v)
+print(v_man)

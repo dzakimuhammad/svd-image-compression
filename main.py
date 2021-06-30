@@ -1,5 +1,6 @@
 from imgUtil import compress_img, write_img, sizecompression_pct
 from time import time
+from huffman import huffmancompression
 # from matrixUtil import 
 
 print("---- IMAGE COMPRESSION ----")
@@ -12,21 +13,22 @@ print()
 
 filename = input(("Masukkan nama file gambar pada folder in yang ingin kamu kompres (tuliskan ekstensi juga): "))
 inputfile = 'in/'+filename
-print()
-output = 'out/'+filename
+output = input(("Masukkan nama file gambar hasil kompresi (tuliskan ekstensi juga): "))
+outputfile = 'out/'+filename
 
-rank = int(input("Masukkan nominal singular value/rank : "))
-print()
-
-start = time()
 if method == 1:
+    rank = int(input("Masukkan nominal singular value/rank : "))
+    print()
+    start = time()
     const_matrix = compress_img(inputfile, rank)
-    write_img(const_matrix, filename)
+    write_img(const_matrix, output)
     exectime = time() - start
-    print("Kompresi gambar berhasil!")
-    print("Waktu eksekusi program: " + str(round(exectime, 3)) + " detik")
-    print("Persentase ukuran memori gambar yang dikompresi terhadap gambar original: " + str(round(sizecompression_pct(inputfile, output), 2)) + "%")
 
 else:
-    end = time()
-    print
+    start = time()
+    huffmancompression(inputfile, output)
+    exectime = time() - start
+
+print("Kompresi gambar berhasil!")
+print("Waktu eksekusi program: " + str(round(exectime, 3)) + " detik")
+print("Persentase ukuran memori gambar yang dikompresi terhadap gambar original: " + str(round(sizecompression_pct(inputfile, outputfile), 2)) + "%")
