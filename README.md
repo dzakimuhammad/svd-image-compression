@@ -3,73 +3,36 @@ Tugas CaIRK 2019
 
 Memanfaatkan algoritma Singular Value Decomposition untuk kompresi gambar
 
-## General Description
-Algoritma SVD merupakan salah satu metode dalam aljabar linier untuk memfaktorisasi suatu matriks A berukuran mxn menjadi tiga buah matriks: matriks ortogonal U dan V, serta matriks diagonal S sesuai persamaan berikut.
+## Cara Penggunaan Program
+1. Buka terminal, arahkan ke direktori tempat program disimpan yaitu pada folder 'svd-image-compression' atau nama folder tempat repository ini disimpan.
+2. Jalankan perintah berikut untuk menjalankan program.
+```
+python main.py
+```
+3. Instruksi lebih lanjut disediakan dalam program
 
-<div align="center">
+Catatan : Gambar input harus berada dalam folder 'in' dan gambar output yang dihasilkan selalu disimpan pada folder 'out'
 
-![a=usv](https://latex.codecogs.com/png.latex?%5Cdpi%7B120%7D%20%5CLARGE%20A_%7Bm%5Ctimes%20n%7D%20%3D%20U_%7Bm%5Ctimes%20m%7D%5C%20S_%7Bm%20%5Ctimes%20n%7D%5C%20V_%7Bnxn%7D%5E%7BT%7D)
+## Penjelasan Algoritma SVD
+1. Penjelasan matriks U, S, V
+SVD is based on a theorem from linear algebra which says that a rectangular matrix A can
+be broken down into the product of three matrices - an orthogonal matrix U, a diagonal
+matrix S, and the transpose of an orthogonal matrix V
 
-</div>
+2. Pemanfaatan *rank* dalam kualitas kompresi gambar
+the purpose is not to actually reconstruct the original matrix but to use the reduced dimensionality representation to identify similar words and documents.
 
-Keterangan tambahan: Matriks **U** dan **V** terdiri atas eigenvector matriks dari **A<sup>T</sup>A** dan **AA<sup>T</sup>** berurutan. Diagonal pada matriks **S** terdiri atas akar dari eigenvalue matriks **A<sup>T</sup>A** atau **AA<sup>T</sup>** (kedua matriks ini memiliki eigenvalue yang sama)
+## Referensi dan Library
+### Referensi
+1. https://davetang.org/file/Singular_Value_Decomposition_Tutorial.pdf
+2. http://www.math.utah.edu/~goller/F15_M2270/BradyMathews_SVDImage.pdf
+3. https://www.youtube.com/watch?v=SU851ljMIZ8
+4. https://github.com/JoshuaEbenezer/huffman_encoding/blob/master/huffman.py
+5. https://stackoverflow.com/questions/11587044/how-can-i-create-a-tree-for-huffman-encoding-and-decoding
 
-Algoritma ini sangat sering digunakan dalam bidang *data science* dan pengolahan citra. Melalui tugas ini, kamu dapat mengetahui bagaimana algoritma SVD dimanfaatkan untuk melakukan *image compression*.
-
-Melalui ketiga matriks hasil SVD, kamu dapat melakukan aproksimasi suatu gambar yang mampu memakan ukuran lebih sedikit dari file gambar original. Metode aproksimasi ini diserahkan kepada kamu untuk diteliti lebih lanjut.
-
-## Spesifikasi (1500 poin)
-### Spesifikasi program (1300 poin):
-
-1. Program dijalankan di console (command prompt/ terminal) biasa.
-2. Program menerima input berupa path file gambar yang dikompresi (jpg atau png), serta tingkat kompresi gambar yang diinginkan (dibebaskan ke kamu format opsinya). Kamu dapat memakai gambar ini untuk uji coba program (folder in).
-<div align="center">
-
-![momo.jpg](./in/momo.jpg)
-<br>
-
-**Fig 1.** Momo
-</div>
-
-3. Program dapat dikembangkan dengan bahasa apapun (sangat disarankan menggunakan Python).
-4. Penggunaan library diperbolehkan untuk pengolahan citra dan pengolahan matriks (misal: scipy, opencv2, etc), namun implementasi algoritma from scratch akan sangat dihargai. 
-<br/> Namun, penggunaan library yang melakukan kompresi gambar secara langsung dan melakukan komputasi SVD (misal: `numpy.linalg.svd`) <b>tidak diperbolehkan</b>.
-5. Program dapat menyimpan gambar hasil kompresi pada direktori default (folder out).
-6. Program dapat menampilkan runtime program dan persentase ukuran memori gambar yang dikompresi terhadap gambar original. 
-Gambar hasil kompresi harus memiliki kualitas dan ukuran memori yang berbeda dari gambar masukan. Dimensi gambar tetap dipertahankan.
-
-### Lain-lain (200 poin)
-Tulis ulang README ini dengan informasi sebagai berikut
-
-1. Cara penggunaan program
-2. Penjelasan singkat tentang algoritma SVD, minimal memuat:
-    - Penjelasan tentang matriks U, S, V
-    - Pemanfaatan *rank* dalam kualitas kompresi gambar
-3. Referensi, framework, dan library yang membantu Anda dalam mengerjakan tugas ini beserta alasan penggunaannya.
-
-Untuk demo, kamu dapat membuat video screen record sederhana dengan *voiceover* menjelaskan implementasi algoritma pada program dan cara penggunaan program. Sekalian jelasin ini dong hehe:
-
-1. Matkul IRK fav
-2. Pengen jadi asisten matkul apa aja kalau jadi asisten (amin)
-3. Ekspektasi pas udah jadi asisten IRK  
-
-Video diupload ke GDrive atau YouTube (salah satu aja bebas). Kreativitas video tidak dinilai, jadi buat yang simpel saja ya.
-
-## Bonus (900 poin)
-### Huffman Coding
-Tambahkan opsi algoritma Huffman untuk melakukan kompresi gambar. Untuk bonus ini, kamu perlu menambah opsi algoritma kompresi pada program kamu. Kamu tidak perlu menentukan berapa tingkat kompresi yang diinginkan untuk kompresi dengan Huffman.
-
-***Note**: bonus hanya akan dinilai jika seluruh spek dasar berhasil diimplementasikan*
-
-## Pengerjaan
-
-- Buat repositori baru (*private*) lalu invite akun GitHub **williammfu**
-- Pengumpulan dapat dilakukan dengan mengirimkan link repositori GitHub dan link video (GDrive atau YouTube) via email ke 13518055@std.stei.itb.ac.id
-- Bila ada pertanyaan, silahkan buat *issue* baru di repositori ini
-
-## Referensi
-* https://davetang.org/file/Singular_Value_Decomposition_Tutorial.pdf
-
-* https://www.d.umn.edu/~mhampton/m4326svd_example.pdf
-
-* http://www.math.utah.edu/~goller/F15_M2270/BradyMathews_SVDImage.pdf
+### Library
+1. Numpy : digunakan untuk pengolahan matriks (transpose, eigen, SVD, dsb.)
+2. PILLOW : digunakan untuk rekonstruksi gambar
+3. cv2 : digunakan untuk membaca gambar menjadi matriks yang didekomposisi menjadi matriks RGB
+4. os : digunakan untuk mencari detail file berdasarkan lokasi file 
+5. queue : digunakan untuk membuat priority queue dalam pembentukan pohon huffman
