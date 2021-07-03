@@ -1,48 +1,26 @@
 import numpy as np
 
+def svd_matrix(matrix):
+    u, sigma, vt = np.linalg.svd(matrix)
+    return u, sigma, vt
+
+def compress_matrix(matrix, rank):
+    u, s, vt = svd_matrix(matrix)
+    leftSide = np.matmul(u[:, 0:rank], np.diag(s)[0:rank, 0:rank])  # Perkalian matriks u, s, vt untuk memperoleh matriks yang terkompresi
+    comp_matrix = np.matmul(leftSide, vt[0:rank, :])
+    res_matrix = comp_matrix.astype('uint8')
+    return res_matrix
+
+'''
+BONUS UTILITY
+'''
+
 def transpose(matrix):
     return np.transpose(matrix)
 
-def arrscalarProduct(array, k):
-    for i in range(len(array)):
-        array[i] = array[i] * k 
-    return array
-
 def multiply(matrix1, matrix2):
     # syarat digunakan : ukuran matrix1 dan matrix2 mengikuti kaidah perkalian matriks dan menghasilkan matriks result
-    resultrow = len(matrix1)
-    resultcol = len(matrix2[0])
-    result = [[0 for j in range(resultcol)] for i in range(resultrow)]
-    for i in range(resultrow):
-        for j in range(resultcol):
-            for k in range(len(matrix2)):
-                result[i][j] += int(matrix1[i][k]) * int(matrix2[k][j])
-    return np.array(result)
-
-def minormatrix(matrix, i, j):
-    # mendapatkan minor matrix dengan menghilangkan row i dan kolom j
-    return [row[: j] + row[j+1:] for row in (matrix[: i] + matrix[i+1:])]
- 
- 
-def determinant(matrix):
-    # basis rekursi : matriks 2x2
-    if(len(matrix) == 2):
-        det = matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1]
-        return det
-
-    det = 0
-    
-    # penghitungan determinan matriks menggunakan kofaktor
-    for col in range(len(matrix)):
-        det_minor = determinant(minormatrix(matrix, 0, col))
-        cofactor = (-1)**(col) * det_minor
-        det += matrix[0][col] * cofactor
-
-    return det
-
-def subtract(matrix1, matrix2):
-    mat = [[matrix1[i][j] - matrix2[i][j] for j in range(len(matrix1[0]))] for i in range(len(matrix1))]
-    return mat
+    return np.dot(matrix1.tolist(), matrix2.tolist())
 
 def eigenvalue(matrix):
     w, v = np.linalg.eig(matrix)
@@ -52,57 +30,51 @@ def eigenvectors(matrix):
     w, v = np.linalg.eig(matrix)
     return v
 
-def sigmavalue(matrix):
+def sigma_matrix(matrix):  
+    # sigma matrix didapat dari akar dari nilai eigen matrix AAT (A*Atranspose) lalu diurut menurun
+    aat = multiply(matrix, transpose(matrix))
     sigma_val = []
-    eigen_val = eigenvalue(matrix)
+    eigen_val = eigenvalue(aat)
     for val in eigen_val:
         sigma_val.append(abs(val)**(0.5))
-    return np.array(sigma_val)
-
-def sigma_matrix(matrix):
-    aat = multiply(matrix, transpose(matrix))
-    sigma_val = sigmavalue(aat)
-    s = np.round(sigma_val, decimals=5)
-    return s 
-
-def vtrans_matrix(matrix):
-    ata = multiply(transpose(matrix), matrix)
-    vt = transpose(eigenvectors(ata))
-    vt = np.array(vt)
-    for i in range(len(vt)):
-        norm = np.linalg.norm(vt[i])
-        vt[i] = vt[i]/norm
-    return np.round(vt, decimals=5)
+    sigma_val = np.array(sigma_val)
+    return np.flip(np.sort(sigma_val)) 
 
 def u_matrix(matrix):
+    # U matrix didapat dari vektor eigen matrix AAT dimana urutan vektor eigen menyesuaikan eigenvalue yang diurut menurun
     aat = multiply(matrix, transpose(matrix))
-    u = eigenvectors(aat)
-    u = np.array(u)
-    for i in range(len(u)):
-        norm = np.linalg.norm(u[i])
-        u[i] = u[i]/norm
-    return np.round(u, decimals=5)
+    eigen = eigenvalue(aat)
+    indexarr = np.flip(np.argsort(eigen))
+    vectors = [[] for i in range(len(eigen))]
+    u = transpose(eigenvectors(aat))
+    for i in range(len(eigen)):
+        vectors[i] = u[indexarr[i]]
+    vectors = np.array(vectors)
+    for i in range(len(vectors)):       # Normalisasi vektor
+        norm = np.linalg.norm(vectors[i])
+        vectors[i] = vectors[i].real/norm
+    return transpose(vectors)
 
-def svd_matrix(matrix):
-    u, sigma, vt = np.linalg.svd(matrix)
-    return u, sigma, vt
+def vtrans_matrix(matrix):
+    # Vt matrix didapat dari vektor eigen matrix ATA dimana urutan vektor eigen menyesuaikan eigenvalue yang diurut menurun
+    ata = multiply(transpose(matrix), matrix)
+    eigen = eigenvalue(ata)
+    indexarr = np.flip(np.argsort(eigen))
+    vectors = [[] for i in range(len(eigen))]
+    vt = transpose(eigenvectors(ata))
+    for i in range(len(eigen)):
+        vectors[i] = vt[indexarr[i]]
+    vectors = np.array(vectors)
+    for i in range(len(vectors)):   # Normalisasi vektor
+        norm = np.linalg.norm(vectors[i])
+        vectors[i] = vectors[i].real/norm
+    return vectors
 
-def compress_matrix(matrix, rank):
-    u, s, vt = svd_matrix(matrix)
-    leftSide = np.matmul(u[:, 0:rank], np.diag(s)[0:rank, 0:rank])
-    comp_matrix = np.matmul(leftSide, vt[0:rank, :])
-    res_matrix = comp_matrix.astype('uint8')
-    return res_matrix
-
-def test_matrix(matrix, rank):
+def compress_matrix_manual(matrix, rank):
     u = u_matrix(matrix)
     s = sigma_matrix(matrix)
     vt = vtrans_matrix(matrix)
-    leftSide = np.matmul(u[:, 0:rank], np.diag(s)[0:rank, 0:rank])
+    leftSide = np.matmul(u[:, 0:rank], np.diag(s)[0:rank, 0:rank]) # Perkalian matriks u, s, vt untuk memperoleh matriks yang terkompresi
     comp_matrix = np.matmul(leftSide, vt[0:rank, :])
     res_matrix = comp_matrix.astype('uint8')
     return res_matrix
-
-# matrix1 = [[3,1,1], [-1,3,1]]
-# aat = multiply(matrix1, transpose(matrix1))
-# ata = multiply(transpose(matrix1), matrix1)

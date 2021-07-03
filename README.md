@@ -3,6 +3,17 @@ Tugas CaIRK 2019
 
 Memanfaatkan algoritma Singular Value Decomposition untuk kompresi gambar
 
+## Identitas Pembuat:
+1. Dzaki Muhammad 13519049
+
+## Struktur Direktori:
+1. **folder in** -> lokasi penyimpanan gambar untuk keperluan input program.
+2. **folder out** -> lokasi penyimpanan gambar sebagai output program.
+3. **matrixUtil.py** -> file python berisi fungsi beserta prosedur yang berguna dalam pengolahan matriks dan pembentukan matriks algoritma SVD
+4. **imgUtil.py** -> file python berisi fungsi beserta prosedur yang berguna dalam pengolahan gambar termasuk dekomposisi dan kompresi gambar
+5. **huffman.py** -> file python berisi fungsi beserta prosedur implementasi *huffman coding* dalam kompresi gambar
+6. **main.py** -> file program utama
+
 ## Cara Penggunaan Program
 1. Buka terminal, arahkan ke direktori tempat program disimpan yaitu pada folder 'svd-image-compression' atau nama folder tempat repository ini disimpan.
 2. Jalankan perintah berikut untuk menjalankan program.
@@ -36,3 +47,4 @@ the purpose is not to actually reconstruct the original matrix but to use the re
 3. cv2 : digunakan untuk membaca gambar menjadi matriks yang didekomposisi menjadi matriks RGB
 4. os : digunakan untuk mencari detail file berdasarkan lokasi file 
 5. queue : digunakan untuk membuat priority queue dalam pembentukan pohon huffman
+6. time : digunakan untuk menghitung waktu eksekusi program 

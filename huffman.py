@@ -20,7 +20,7 @@ class Node:
 		else:
 			return 0
 
-def create_tree(probabilities):
+def create_tree(probabilities):		# Membuat pohon huffman menggunakan priority queue lalu mengembalikan simpul akarnya
 	prq = queue.PriorityQueue()		# inisialisasi prio queue
 	for colorint, probability in enumerate(probabilities):
 		leaf = Node()
@@ -44,7 +44,7 @@ def create_tree(probabilities):
 
 	return prq.get()
 
-def traverseNodes(node, val='', f={}):
+def traverseNodes(node, val='', f={}):	# Memeriksa tiap simpul pada pohon huffman dan membuat dictionary kode huffman dengan key data
     # kode huffman untuk node yang diperiksa
     newVal = val + str(node.huff)
  
@@ -71,7 +71,7 @@ def inversedict(dictionary):
     inv = {v: k for k, v in dictionary.items()}
     return inv
 
-def encodemat(mat, code):
+def encodemat(mat, code):	# encoding matrix mat menggunakan dictionary kode huffman 'code'
     encoded = [['  ' for j in range(len(mat[0]))] for i in range(len(mat))]
     for i in range(len(mat)):
         for j in range(len(mat[0])):
@@ -80,7 +80,7 @@ def encodemat(mat, code):
     encoded = np.array(encoded)
     return encoded
 
-def decodemat(mat, code):
+def decodemat(mat, code): 	# decoding matrix mat menggunakan dictionary kode huffman 'code'
 	code = inversedict(code)
 	decoded = [[0 for j in range(len(mat[0]))] for i in range(len(mat))]
 	for i in range(len(mat)):
@@ -89,8 +89,9 @@ def decodemat(mat, code):
 	decoded = np.array(decoded)
 	return(decoded)
 
-def huffmancompression(input, output):
-	red, green, blue = img_to_rgb(input)
+def huffmancompression(inputFile, outputFile):		
+	# Mengompresi gambar dengan nama file 'inputFile' menggunakan metode huffman lalu menuliskannya kembali menjadi gambar dengan nama file 'outputFile' pada folder 'out'
+	red, green, blue = img_to_rgb(inputFile)
 
 	encoded_red = encodemat(red, getHuffmanDict(red))
 	encoded_green = encodemat(green, getHuffmanDict(green))
@@ -101,13 +102,5 @@ def huffmancompression(input, output):
 	decoded_blue = decodemat(encoded_blue, getHuffmanDict(blue))
 	
 	img = merge_rgb(decoded_red, decoded_green, decoded_blue)
-	write_img(img, output)
-
-# filename = 'in/momo.jpg'
-# huffmancompression(filename, 'momo.jpg')
-# red, green, blue = img_to_rgb(filename)
-# a = getHuffmanDict(red)
-# b = testHuffmanDict(red)
-# print(len(a))
-# print(len(b))
+	write_img(img, outputFile)
 
