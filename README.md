@@ -24,22 +24,31 @@ python main.py
 
 Catatan : Gambar input harus berada dalam folder 'in' dan gambar output yang dihasilkan selalu disimpan pada folder 'out'
 
-## Penjelasan Algoritma SVD
+## Penjelasan Algoritma 
+Algoritma SVD didasarkan pada teorema dalam aljabar linier yang menyatakan bahwa sebuah matrix A 2D dapat dipecah menjadi hasil perkalian dari 3 sub-matriks - matriks ortogonal U, matriks diagonal S, dan transpose dari matriks ortogonal V. Dekomposisi matriks ini dapat dinyatakan sesuai persamaan berikut. 
+
+<div align="center">
+
+![a=usv](https://latex.codecogs.com/png.latex?%5Cdpi%7B120%7D%20%5CLARGE%20A_%7Bm%5Ctimes%20n%7D%20%3D%20U_%7Bm%5Ctimes%20m%7D%5C%20S_%7Bm%20%5Ctimes%20n%7D%5C%20V_%7Bnxn%7D%5E%7BT%7D)
+
+</div>
+
 1. Penjelasan matriks U, S, V
-SVD is based on a theorem from linear algebra which says that a rectangular matrix A can
-be broken down into the product of three matrices - an orthogonal matrix U, a diagonal
-matrix S, and the transpose of an orthogonal matrix V
+* Matriks U adalah matriks yang kolomnya terdiri dari vektor eigen ortonormal dari matriks AA<sup>T</sup>. Matriks ini menyimpan informasi yang penting terkait baris-baris matriks awal, dengan informasi terpenting disimpan di dalam kolom pertama.
+* Matriks S adalah matriks diagonal yang berisi akar dari nilai eigen matriks U atau V yang terurut menurun.
+* Matriks V adalah matriks yang kolomnya terdiri dari vektor eigen ortonormal dari matriks A<sup>T</sup>A. Matriks ini menyimpan informasi yang penting terkait kolom-kolom matriks awal, dengan informasi terpenting disimpan dalam baris pertama.
 
 2. Pemanfaatan *rank* dalam kualitas kompresi gambar
-the purpose is not to actually reconstruct the original matrix but to use the reduced dimensionality representation to identify similar words and documents.
+Rank dalam SVD adalah jumlah dari singular value yang bukan nol dari suatu matriks. Rank memiliki nilai maksimal sebesar jumlah baris/kolom dari matriks S. Seperti yang telah dijelaskan informasi-informasi yang disimpan dalam matriks U, S, V diurutkan dari informasi yang terpenting hingga informasi yang insignifikan. Sehingga jumlah singular value yang digunakan dalam rekonstruksi matriks gambar berpengaruh dalam keakuratan hasil matriks yang direkonstruksi. Semakin banyak jumlah singular value/rank (semakin banyak informasi penting), semakin akurat gambar luaran yang dihasilkan. 
 
 ## Referensi dan Library
 ### Referensi
 1. https://davetang.org/file/Singular_Value_Decomposition_Tutorial.pdf
 2. http://www.math.utah.edu/~goller/F15_M2270/BradyMathews_SVDImage.pdf
-3. https://www.youtube.com/watch?v=SU851ljMIZ8
-4. https://github.com/JoshuaEbenezer/huffman_encoding/blob/master/huffman.py
-5. https://stackoverflow.com/questions/11587044/how-can-i-create-a-tree-for-huffman-encoding-and-decoding
+3. http://pillowlab.princeton.edu/teaching/statneuro2018/slides/notes03a_SVDandLinSys.pdf
+4. https://www.youtube.com/watch?v=SU851ljMIZ8
+5. https://github.com/JoshuaEbenezer/huffman_encoding/blob/master/huffman.py
+6. https://stackoverflow.com/questions/11587044/how-can-i-create-a-tree-for-huffman-encoding-and-decoding
 
 ### Library
 1. Numpy : digunakan untuk pengolahan matriks (transpose, eigen, SVD, dsb.)

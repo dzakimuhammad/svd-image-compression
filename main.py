@@ -1,4 +1,5 @@
-from imgUtil import compress_img, compress_img_manual, write_img, sizecompression_pct
+from imgUtil import img_to_rgb, compress_img, compress_img_manual, write_img, sizecompression_pct
+from matrixUtil import max_rank
 from time import time
 from huffman import huffmancompression
 import os
@@ -39,12 +40,19 @@ while(run):
         else:
             invalidChoice = False
         print()
-        
+
     outputfile = 'out/'+output
     print()
 
+    red, green, blue = img_to_rgb(inputfile)
+    maxrank = max_rank(red)
+
     if method == 1:
-        rank = int(input("Masukkan nominal singular value/rank : "))
+        invalidChoice =True 
+        while(invalidChoice):
+            rank = int(input("Masukkan nominal singular value/rank (max " +str(maxrank)+  "): "))
+            if rank <= maxrank and rank > 0:
+                invalidChoice = False
         print()
         start = time()
         const_matrix = compress_img(inputfile, rank)
@@ -57,7 +65,11 @@ while(run):
         exectime = time() - start
     
     if method == 3:
-        rank = int(input("Masukkan nominal singular value/rank : "))
+        invalidChoice =True 
+        while(invalidChoice):
+            rank = int(input("Masukkan nominal singular value/rank (max " +str(maxrank)+  "): "))
+            if rank <= maxrank and rank > 0:
+                invalidChoice = False
         print()
         start = time()
         const_matrix = compress_img_manual(inputfile, rank)

@@ -11,6 +11,10 @@ def compress_matrix(matrix, rank):
     res_matrix = comp_matrix.astype('uint8')
     return res_matrix
 
+def max_rank(matrix):
+    u, sigma, vt = np.linalg.svd(matrix)
+    return len(sigma)
+
 '''
 BONUS UTILITY
 '''
